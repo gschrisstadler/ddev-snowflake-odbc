@@ -12,9 +12,9 @@ if [ ! -e "./web-build/snowflake-odbc/${PACKAGE_NAME}" ]; then
   exit 1;
 fi
 
-if [ "${GOARCH}" = "amd64" ]; then
+if [ "$GOARCH" = "amd64" ]; then
   ARCH="x86_64";
-elif [ "${GOARCH}" = "arm64" ]; then
+elif [ "$GOARCH" = "arm64" ]; then
   ARCH="aarch64";
 else
   echo "This package does not work on this machines";
@@ -23,7 +23,7 @@ fi
 
 add_directives() {
   local FILE_PATH="$1"
-  cat <<EOF >> "${FILE_PATH}"
+  cat <<EOF >> "$FILE_PATH"
 # BEGIN Snowflake ODBC Install
 RUN (apt-get -qq update || true) && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests php${DDEV_PHP_VERSION}-odbc libodbc1 unixodbc
 RUN ln -s "/usr/lib/${ARCH}-linux-gnu/libodbccr.so.2" "/etc/libodbccr.so"
@@ -39,25 +39,24 @@ remove_directives() {
   between_markers=false
 
   while IFS= read -r LINE; do
-    if [[ "${LINE}" == "# BEGIN Snowflake ODBC Install" ]]; then
+    if [[ $LINE == "# BEGIN Snowflake ODBC Install" ]]; then
       between_markers=true
       continue
     fi
 
-    if [[ "${LINE}" == "# END Snowflake ODBC Install" ]]; then
+    if [[ $LINE == "# END Snowflake ODBC Install" ]]; then
       between_markers=false
       continue
     fi
 
-    if [ "${between_markers}" == false ]; then
-      echo "${LINE}" >> "${TMP_FILE}"
+    if [ "$between_markers" == false ]; then
+      echo "$LINE" >> "$TMP_FILE"
     fi
-
-  done < "${FILE_PATH}"
+  done < "$FILE_PATH"
 }
 
 FILE_PATH="./web-build/Dockerfile"
-if [ -e "${FILE_PATH}" ]; then
-	remove_directives "${FILE_PATH}"
+if [ -e "$FILE_PATH" ]; then
+	remove_directives "$FILE_PATH"
 fi
-add_directives "${FILE_PATH}"
+add_directives "$FILE_PATH"

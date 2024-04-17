@@ -3,10 +3,10 @@
 
 set -e
 
-if [ "${GOARCH}" = "amd64" ]; then
+if [ "$GOARCH" = "amd64" ]; then
   ARCH="x86_64";
   BUILD="";
-elif [ "${GOARCH}" = "arm64" ]; then
+elif [ "$GOARCH" = "arm64" ]; then
   ARCH="aarch64";
   BUILD="aarch64";
 else
@@ -17,12 +17,12 @@ fi
 PACKAGE_URL="https://sfc-repo.snowflakecomputing.com/odbc/linux$BUILD/3.3.0/snowflake-odbc-3.3.0.$ARCH.deb"
 PACKAGE_NAME="./web-build/snowflake-odbc/snowflake.deb"
 
-rm -f "${PACKAGE_NAME}"
+rm -f "$PACKAGE_NAME"
 
 if command -v wget &> /dev/null; then
-  wget -O "${PACKAGE_NAME}" "${PACKAGE_URL}"
+  wget -O "$PACKAGE_NAME" "$PACKAGE_URL"
 elif command -v curl &> /dev/null; then
-  curl "${PACKAGE_URL}" -o "${PACKAGE_NAME}"
+  curl "$PACKAGE_URL" -o "$PACKAGE_NAME"
 else
   echo "None of the required downloaders (wget, curl) are available."
   exit 1
