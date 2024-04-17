@@ -1,3 +1,8 @@
 # DDEV Snowflake ODBC
 
-## in Development
+## Install/Update
+
+```bash
+ddev get gschrisstadler/ddev-snowflake-odbc
+ddev restart
+```
