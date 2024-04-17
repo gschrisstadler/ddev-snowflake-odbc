@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-# ddev-generated
+#ddev-generated
 
 set -e
 
 PACKAGE_PATH="./snowflake-odbc"
 TMP_PATH="/tmp"
 PACKAGE_NAME="snowflake.deb"
-
-echo "Install Snowflake ODBC";
 
 if [ ! -e "./web-build/snowflake-odbc/${PACKAGE_NAME}" ]; then
   echo "Package wasn't correctly downloaded.";
@@ -23,10 +21,43 @@ else
   exit 1;
 fi
 
-cat <<EOF >> "./web-build/Dockerfile"
+add_directives() {
+  local FILE_PATH="$1"
+  cat <<EOF >> "${FILE_PATH}"
 # BEGIN Snowflake ODBC Install
 RUN (apt-get -qq update || true) && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests php${DDEV_PHP_VERSION}-odbc libodbc1 unixodbc
 RUN ln -s "/usr/lib/${ARCH}-linux-gnu/libodbccr.so.2" "/etc/libodbccr.so"
 ADD "${PACKAGE_PATH}/${PACKAGE_NAME}" "${TMP_PATH}"
 RUN dpkg -i "${TMP_PATH}/${PACKAGE_NAME}"
+# END Snowflake ODBC Install
 EOF
+}
+
+remove_directives() {
+  local FILE_PATH="$1"
+  TMP_FILE="$(mktemp)"
+  between_markers=false
+
+  while IFS= read -r LINE; do
+    if [[ "${LINE}" == "# BEGIN Snowflake ODBC Install" ]]; then
+      between_markers=true
+      continue
+    fi
+
+    if [[ "${LINE}" == "# END Snowflake ODBC Install" ]]; then
+      between_markers=false
+      continue
+    fi
+
+    if [ "${between_markers}" == false ]; then
+      echo "${LINE}" >> "${TMP_FILE}"
+    fi
+
+  done < "${FILE_PATH}"
+}
+
+FILE_PATH="./web-build/Dockerfile"
+if [ -e "${FILE_PATH}" ]; then
+	remove_directives "${FILE_PATH}"
+fi
+add_directives "${FILE_PATH}"
