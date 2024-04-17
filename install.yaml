@@ -1,10 +1,5 @@
 name: snowflake-odbc
 
-pre_install_actions:
-  - |
-    #ddev-description: Install ODBC and PHP Extension
-    (apt-get -qq update || true) && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests php${DDEV_PHP_VERSION}-odbc unixodbc
-
 project_files:
  - web-build/snowflake-odbc/download-package
  - web-build/snowflake-odbc/modify-dockerfile

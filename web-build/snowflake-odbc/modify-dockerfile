@@ -14,5 +14,6 @@ fi
 
 cat <<EOF >> "./web-build/Dockerfile"
 # BEGIN Snowflake ODBC Install
+RUN (apt-get -qq update || true) && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests php${DDEV_PHP_VERSION}-odbc unixodbc
 RUN dpkg -i ${PACKAGE_NAME}
 EOF
