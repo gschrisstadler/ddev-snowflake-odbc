@@ -16,7 +16,7 @@ else
   exit 1;
 fi
 
-PACKAGE_URL="https://sfc-repo.snowflakecomputing.com/odbc/linux$BUILD/3.3.0/snowflake-odbc-3.3.0.$ARCH.deb"
+PACKAGE_URL="https://sfc-repo.snowflakecomputing.com/odbc/linux$BUILD/3.4.1/snowflake-odbc-3.4.1.$ARCH.deb"
 PACKAGE_NAME="./web-build/snowflake-odbc/snowflake.deb"
 
 rm -f "$PACKAGE_NAME"
